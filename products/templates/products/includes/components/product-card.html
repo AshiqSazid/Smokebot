@@ -1,0 +1,130 @@
+<div class="card my-1 my-md-2 mx-auto p-3 bg-black border-red text-light rounded-0">
+
+    <div class="h-50 card-img-top text-center">
+
+        <!-- image or placeholder -->
+        <a href="{% url 'product_detail' product.slug %}" aria-label="Opens the product details page">
+            {% if product.image %}
+
+                    <img class="img-fluid h-100"  src="{{ product.image.url }}" alt="{{ product.name }}">
+
+            {% else %}
+
+                    <img class="img-fluid h-100" src="{{ MEDIA_URL }}noimage.png" alt="No image available for {{ product.name }}">
+                
+            {% endif %}
+        </a>
+    </div>
+
+    <div class="card-body h-25 d-flex flex-column justify-content-between py-3">
+
+        <h2 class="card-title text-center text-warning font-weight-bold text-capitalize sub-heading">{{ product.name }}</h2>
+
+        <p class="card-text mt-3 text-right">
+
+            <i class="fa-solid fa-star text-warning font-weight-bold"></i> 
+            {{ product.current_rating }} / 5
+
+        </p>
+
+        <div>
+
+            <!-- Product price and if relevant sale price to show saving -->
+            {% if product.has_sale %}
+
+                <p class="text-center font-weight-bold mb-0 pl-5 ml-5">
+                    <s class="text-danger">&euro;{{ product.rrp }}</s>
+                </p>
+            
+            {% endif %}
+            
+            <p class="text-center font-weight-bold">&euro;{{ product.price }}</p>
+        
+        </div>
+
+    </div>
+
+    <div class="row card-footer px-0 no-gutters">
+
+        <div class="col-12">
+
+            <p class="mx-1">
+
+                <span class="small text-muted">
+                    <i class="fas fa-tag mr-1"></i> {{ product.sub_category.friendly_name }}
+                </span>
+
+                <span class="float-right">
+
+                    <!-- Stock indicator -->
+                    {% if product.in_stock %}
+
+                        <i class="fa-regular fa-square-check fa-sm text-success"></i> {{product.stock_level}} in stock
+
+                    {% else %}
+
+                        <i class="fa-regular fa-rectangle-xmark fa-sm text-danger"></i> Out of Stock
+
+                    {% endif %}
+                </span>
+            </p>
+
+            <form action="{% url 'add_to_cart' product.id %}" method="POST">
+                
+                {% csrf_token %}
+
+                <div class="row">
+
+                    <div class="col-12 d-flex justify-content-between align-items-start">
+
+                        <!-- Qty selector buttons -->
+                        <div class="form-group">
+
+                            <div class="input-group input-group-{{ product.id }}">
+
+                                <div class="input-group-prepend">
+
+                                    <button class="btn btn-danger py-1 border border-dark decrease-qty decrease-qty-{{ product.id }}" data-product-id="{{ product.id}}" aria-label="decrease quantity">
+
+                                        <span>
+                                            <i class="fas fa-minus fa-sm"></i>
+                                        </span>
+
+                                    </button>
+                                </div>
+
+                                <input type="number" name="quantity" class="text-center form-control border border-dark qty-input current-qty-pid-{{ product.id }}" value="1" min="1" max="{{ product.stock_level }}" data-product-id="{{ product.id }}" aria-label="quantity">
+                                
+                                <div class="input-group-append">
+
+                                    <button class="btn btn-success py-1 border border-dark increase-qty increase-qty-{{ product.id }}" data-product-id="{{ product.id}}" aria-label="increase quantity">
+                                        
+                                        <span>
+                                            <i class="fas fa-plus fa-sm"></i>
+                                        </span>
+
+                                    </button>
+                                
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <button class="btn btn-outline-success font-weight-bold px-4" type="submit" {% if not product.in_stock %}disabled{% endif %}>
+                            Add <i class="fa-solid fa-cart-shopping fa-sm"></i>
+                        </button>
+                    
+                    </div>
+                    
+                    <input type="hidden" name="redirect_url" value="{{ request.path }}">
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+        
+</div> 

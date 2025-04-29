@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Voicebot</title>
+</head>
+<body>
+
+<!-- Mic Button -->
+<button id="micButton" style="font-size: 30px; padding: 10px;">🎤 Talk</button>
+
+<!-- Answer Section -->
+<div id="botReply" style="margin-top: 20px; font-size: 20px;"></div>
+
+<script>
+const micButton = document.getElementById('micButton');
+const botReply = document.getElementById('botReply');
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
+
+recognition.lang = 'en-US';
+recognition.interimResults = false;
+
+micButton.addEventListener('click', () => {
+    recognition.start();
+});
+
+recognition.onresult = function(event) {
+    const transcript = event.results[0][0].transcript;
+    console.log('You said:', transcript);
+
+    fetch('/reviews/voicebot/', {   // ✅ adjust path if needed
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: 'text=' + encodeURIComponent(transcript)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.reply) {
+            botReply.innerText = "🤖 " + data.reply;
+            speakText(data.reply);
+        } else {
+            botReply.innerText = "❌ Error: " + data.error;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        botReply.innerText = "❌ Error: " + error;
+    });
+};
+
+function speakText(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(utterance);
+}
+
+// Helper to get CSRF Token (important for Django POST)
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+</body>
+</html>

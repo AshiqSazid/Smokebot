@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'products/css/products.css' %}">
+{% endblock %}
+
+{% block head_title %}- Edit Product{% endblock %}
+
+{% block content %}
+<main class="container mx-auto my-3">
+    
+    <h1 class="text-center text-uppercase mb-4">Edit {{product.name}}</h1>
+
+    <!-- Edit product form -->
+    <form class="mx-auto" action="{% url 'edit_product' product.slug %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Display existing image -->
+        <div class="form-group text-center">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-thumbnail" style="max-width: 200px;">
+            {% else %}
+                <p>No image available for this product.</p>
+            {% endif %}
+        </div>
+    
+        <!-- Render the form -->
+        {{ form|crispy }}
+    
+        <div class="text-center">
+            <button type="submit" class="btn btn-lg btn-warning border border-dark px-5 mt-3">Update</button>
+        </div>
+    </form>
+    
+    <div class="text-center mt-2 p-3">
+
+        <a href="{% url 'product_detail' product.slug %}">
+
+            <span>
+                <i class="fas fa-chevron-left fa-sm"></i>
+            </span>
+
+            Back to {{product.name}}'s' product detials page
+        </a>
+        
+    </div>
+
+</main>
+{% endblock  %}
+
+{% block extra_js %}
+    <script src="{% static 'products/js/editProduct.js' %}"></script>
+{% endblock %}

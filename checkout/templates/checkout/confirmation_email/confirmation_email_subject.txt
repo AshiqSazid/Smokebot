@@ -1,0 +1,1 @@
+Thanks for shopping at smoke bot - Order reference {{ order.order_number }}

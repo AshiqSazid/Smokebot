@@ -1,0 +1,48 @@
+{
+    "python.linting.pylintEnabled": false,
+    "python.linting.enabled": true,
+    "python.linting.pep8Enabled": true,
+    "python.linting.flake8Enabled": false,
+    "python.terminal.activateEnvironment": false,
+    "python.formatting.autopep8Path": "autopep8",
+    "python.linting.flake8Path": "flake8",
+    "files.exclude": {
+       "**/.DS_Store": true,
+       "**/.git": true,
+       "**/.github": true,
+       "**/.gitp*": true,
+       "**/.hg": true,
+       "**/.svn": true,
+       "**/.vscode": true,
+       "**/core.Microsoft*": true,
+       "**/core.mongo*": true,
+       "**/core.python*": true,
+       "**/CVS": true
+    },
+    "files.autoSave": "afterDelay",
+    // "workbench.colorTheme": "Abyss",  <-- remove or comment this line
+    "terminal.integrated.gpuAcceleration": "auto",
+    "editor.defaultFormatter": "ms-python.python",
+    "cSpell.words": [
+       "allauth",
+       "colour",
+       "deleteitem",
+       "dotenv",
+       "Kanthal",
+       "lineitem",
+       "lineitems",
+       "MEDIAFILES",
+       "RDTA",
+       "socialaccount",
+       "summernote",
+       "vapeshop",
+       "vaportown"
+    ],
+    "emmet.includeLanguages": {
+       "django-html": "html"
+    },
+    "python.linting.banditEnabled": false,
+    "python.linting.pycodestyleEnabled": true,
+    "git.ignoreLimitWarning": true
+ }
+ 

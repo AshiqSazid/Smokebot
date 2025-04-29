@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'home/css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+    
+    <div class="hero-image-container bg-black mb-3">
+    
+        <div class="hero-animation index-hero-image mx-auto">
+        </div>
+        
+    </div>
+
+    <main class="container-fluid no-gutters mx-auto">
+
+        <div class="text-center">
+            <a href="{% url 'products' %}" class="btn btn-lg btn-warning font-weight-bold border border-dark px-5"> Shop Now!</a>
+        </div>
+        <div class="row mx-auto mt-4">
+            
+            <div class="col-lg-1"></div>
+            
+            <div class="col-sm-6 col-lg-5 mb-3">
+
+                <a href="{% url 'products' %}?category=vaping_devices" aria-label="Takes you to the Vaping device products">
+                    
+                    <div id="devices" class="home-card card shadow rounded-0 border-red">
+                    
+                        <div class="overlay d-flex align-items-center justify-content-center">
+                    
+                            <h2 class="text-light text-center">Vaping Devices</h2>
+                    
+                        </div>
+                    
+                    </div>
+                
+                </a>
+            
+            </div>
+            
+            <div class="col-sm-6 col-lg-5 mb-3">
+            
+                <a href="{% url 'products' %}?category=e_liquids" aria-label="Takes you to the e-liquid products">
+            
+                    <div id="vape-juice" class="home-card card shadow rounded-0 border-red">
+                        
+                        <div class="overlay d-flex align-items-center justify-content-center">
+                        
+                            <h2 class="text-light text-center">E-liquids</h2>
+                        
+                        </div>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+            <div class="col-lg-1"></div>
+
+        </div>
+
+        <div class="row mx-auto mb-4">
+
+            <div class="col-lg-1"></div>
+
+            <div class="col-sm-6 col-lg-5 mb-3">
+
+                <a href="{% url 'products' %}?category=tanks_and_coils" aria-label="Takes you to the tanks and coils products">
+                    
+                    <div id="tanks-and-coils" class="home-card card shadow rounded-0 border-red">
+
+                        <div class="overlay d-flex align-items-center justify-content-center ">
+
+                            <h2 class="text-light text-center">Tanks and Coils</h2>
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+            <div class="col-sm-6 col-lg-5 mb-3">
+
+                <a href="{% url 'products' %}?category=batteries_and_accessories" aria-label="Takes you to the Batteries and Accessories products">
+                    
+                    <div id="bats-and-accessories" class="home-card card shadow rounded-0 border-red">
+                        
+                        <div class="overlay d-flex align-items-center justify-content-center ">
+
+                            <h2 class="text-light text-center">Batteries and Accessories</h2>
+
+                        </div>
+
+                    </div>
+                </a>
+
+            </div>
+
+            <div class="col-lg-1"></div>
+
+        </div>
+
+    </main>
+{% endblock %}

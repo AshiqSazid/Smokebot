@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load cart_subtotal_tool %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'checkout/css/checkout.css' %}">
+{% endblock %}
+
+{% block head_title %}- Checkout Success{% endblock %}
+
+{% block content %}
+<main class="container my-3">
+
+    <div class="row">
+
+        <div class="col">
+
+            <h1 class="text-left border-bottom mt-0 py-3 mb-4 text-uppercase">Order Confirmation</h1>
+            <p class="{% if from_profile %}border-bottom mt-0 py-3 mb-4{% endif %}">Thank you for shopping with us, the below confirmation {% if from_profile %}was{% else %}will be{% endif %} sent to {{ order.email }}.</p>
+            
+            {% if not from_profile %}
+                <p class="small text-danger border-bottom mt-0 py-3 mb-4">* Kindly note that if this page refreshes or you leave the page it is lost forever. Users who where signed in during checkout can revisit their order history via thier profile.</p>
+            {% endif %}
+
+        </div>
+    </div>
+    <h2 class="sub-heading font-weight-bold">Order Summary:</h2>
+
+    <div class="row">
+
+        <!-- details of the order created automatically -->
+        <div class="col-12 col-sm-6 text-left">
+            <p class="mb-1">Order Reference:</p>
+        </div>
+
+        <div class="col-12 col-sm-6 text-center text-sm-right">
+
+            <p class="mb-1">{{ order.order_number }}</p>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-12 col-sm-6 text-left">
+
+            <p class="mb-1">Time of Purchase:</p>
+
+        </div>
+
+        <div class="col-12 col-sm-6 text-center text-sm-right">
+
+            <p class="mb-1">{{ order.date }}</p>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-12 col-sm-6 text-left">
+            <p class="mb-1">Curent status:</p>
+        </div>
+
+        <div class="col-12 col-sm-6 text-center text-sm-right">
+            <p class="mb-1">{{ order.order_status }}</p>
+        </div>
+
+    </div>
+
+    <div class="row border-top  mt-2">
+        
+        <div class="col-12">
+            <h3 class="text-left mt-2 pb-3 sub-heading">Items purchased:</h3>
+        </div>
+
+    </div>
+
+    <!-- Order items -->
+    {% for ordered_product in order.lineitems.all %}
+
+        <div class="row">
+
+            <div class="col-2 my-2">
+
+                {% if ordered_product.product.image %}
+                    <a href="{{ ordered_product.product.image.url }}" target="_blank" aria-label="Opens the image of {{ ordered_product.product.name }} in a new tab">
+                        <img class="w-100" src="{{ ordered_product.product.image.url }}" alt="image of {{ ordered_product.product.name }}">
+                    </a>
+                {% else %}
+                    <a href="">
+                        <img class="w-100" src="{{ MEDIA_URL }}noimage.png" alt="No image available for {{ ordered_product.product.name }}">
+                    </a>
+                {% endif %}
+
+            </div>
+
+            <div class="col-7">
+
+                <p class="my-2 font-weight-bold">
+                    <!-- opens a new tab to see the product info this is because if a user is not signed in they cannot return to the order confirmation -->
+                    <a href="{% url 'product_detail' ordered_product.product.slug %}" target="_blank" aria-label="Takes you back to {{ ordered_product.product.name }}'s details in a new tab">
+                        {{ ordered_product.product.name }}
+                    </a>
+                </p>
+
+                <p class="my-2 small text-muted">Qty: {{ ordered_product.quantity }}</p>
+
+                <p class="small text-muted">@ €{{ ordered_product.product.price }} each</p>
+
+            </div>
+
+            <div class="col-3 text-right">
+
+                <p class="my-2 small">€{{ ordered_product.product.price | calc_subtotal:ordered_product.quantity }}</p>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+    <!-- Order totals -->
+    <div class="row text-right border-top pt-3">
+
+        <div class="col-8">Order Total:</div>
+        <div class="col-4">€{{ order.order_total }}</div>
+
+    </div>
+
+    <div class="row text-right">
+
+        <div class="col-8">Shipping Method:</div>
+        <div class="col-4">{{ order.shipping_method }}</div>
+
+    </div>
+
+    <div class="row text-right">
+
+        <div class="col-8">Shipping Charge:</div>
+        <div class="col-4">€{{ order.shipping_cost }}</div>
+
+    </div>
+
+    <div class="row text-right border-bottom pb-3">
+
+        <div class="col-8">Grand Total:</div>
+        <div class="col-4">€{{ order.grand_total }}</div>
+
+    </div>
+
+    <div class="row mt-3">
+
+        <div class="col-12">
+
+            <h4 class="text-left mt-2 pb-3 sub-heading">Shipping Details:</h4>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-12">
+
+            <p class="mb-1">{{ order.full_name }}</p>
+
+            <p class="mb-1">{{ order.street_address1 }}</p>
+
+            {% if order.street_address2 %}
+
+                <p class="mb-1">{{ order.street_address2 }}</p>
+
+            {% endif %}
+
+            <p class="mb-1">{{ order.town_or_city }}</p>
+
+            {% if order.county %}
+
+                <p class="mb-1">{{ order.county }}</p>
+
+            {% endif %}
+
+            {% if order.postcode %}
+
+                <p class="mb-1">{{ order.postcode }}</p>
+
+            {% endif %}
+
+            <p class="mb-1">{{ order.country }}</p>
+            <p class="mb-1">{{ order.phone_number }}</p>
+
+        </div>
+
+    </div>
+
+    <div class="row text-center my-3">
+
+        <div class="col-12">
+
+            {% if from_profile %}
+
+                <a href="{% url 'profile' %}" class="btn btn-outline-dark rounded-0 btn-lg mt-3 ml-3">
+                    <span>
+                        <i class="fas fa-chevron-left fa-sm"></i>
+                    </span>
+                    <span class="font-weight-bold pr-2">
+                        Back to Profile
+                    </span>
+                </a>
+
+            {% else %}
+
+                <a href="{% url 'home' %}" class="btn btn-outline-dark rounded-0 btn-lg mt-3">
+
+                    <span>
+                        <i class="fas fa-chevron-left fa-sm"></i>
+                    </span>
+
+                    <span class="font-weight-bold">Back to Home</span>
+
+                </a>
+
+                <a href="{% url 'products' %}?clearance" class="btn btn-lg btn-warning border border-dark px-4 ml-3 mt-3">
+
+                    <span class="font-weight-bold">Special Offers</span>
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</main>
+
+{% endblock %}
+
+

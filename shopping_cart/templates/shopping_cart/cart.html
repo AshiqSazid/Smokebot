@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head_title %}- Shopping Cart{% endblock %}
+
+{% load cart_subtotal_tool %}
+
+{% block content %}
+<main class="container my-3">
+    
+    <div class="row">
+    
+        <div class="col">
+    
+            <h1 class="text-left py-3 border-bottom text-uppercase text-center">Current Cart Items</h1>
+            
+            {% if cart_contents %}
+            
+                <p class="text-center">
+                    <small>Please review your cart before proceeding to the 
+
+                        <a href="#checkout-access" aria-label="Skip to cart reviewbe taken down the page to click pay now button">
+                            checkout page
+                        </a>
+
+                    </small>
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col">
+
+            {% if cart_contents %}
+
+                {% include './includes/components/cart-items-table.html' %}
+
+            {% else %}
+
+                <p class="lead mb-5">Your current cart is empty.</p>
+                <div class="text-center">
+                    <a href="{% url 'products' %}" class="btn btn-outline-dark rounded-0 btn-lg">
+                        
+                        <span class="icon">
+                            <i class="fas fa-chevron-left fa-sm"></i>
+                        </span>
+
+                        <span class="text-uppercase">keep shopping</span>
+
+                    </a>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+    
+</main>
+
+{% endblock %}
+
+{% block postloadjs %}
+    {{ block.super }}
+    <script src="{% static 'products/js/qtySelectorBtns.js' %}"></script>
+    <script src="{% static 'shopping_cart/js/deleteCartItem.js' %}"></script>
+{% endblock %}

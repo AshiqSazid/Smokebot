@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'products/css/products.css' %}">
+{% endblock %}
+
+{% block head_title %}- Products{% endblock %}
+
+{% block content %}
+
+    <main class="container no-gutters my-4 mx-auto p-0 px-md-5">
+
+        <div class="row no-gutters">
+
+            <div class="col-12">
+                <h1 class="text-center text-uppercase">Shop Our {% if clearance %} Special Offers{% else %} Products{% endif %}</h1>
+            </div>
+
+        </div>
+
+        <div class="row no-gutters px-2">
+            
+            <div class="col-12 col-md-6 my-auto order-md-last d-flex justify-content-center justify-content-md-end">
+                
+                {% include "./includes/components/odering-selector-menu.html" %}
+            
+            </div>
+            
+            <div class="col-12 col-md-6 order-md-first">
+                
+                <p class="text-muted mt-3 text-center text-md-left">
+                    
+                    {% if search_query or current_categories or current_ordering or current_subcategories == 'None_None' %}
+                        
+                        <span class="small"><a href="{% url 'products' %}">All Products</a> | </span>
+                    
+                    {% endif %}
+                    
+                    Showing {{ products|length }} Product{%if products|length > 1 %}s{%endif%}{% if search_query %} related to <strong>"{{ search_query }}"</strong>{% endif %}
+                
+                </p>
+            </div>
+
+        </div>
+
+        <!-- To reduce white space when no procuts in filters -->
+        {% if products|length == 0 %}
+        
+            <div class="row no-gutters card-deck mx-auto my-5">
+                
+                <div class="col text-center">
+
+                    <h3 class="text-uppercase my-3">no products available</h3>
+                    <p class="px-3">Our sincere apologies but it appears there are no products currently meeting you needs in the area.</p>
+                    <p class="px-3">That said we are continously updating our catolouge, if you have a special request please reach out to us via the <a href="{% url 'contact_us' %}">contact form</a> and we will do out best to assist you.</p>
+                
+                </div> 
+                
+            </div>
+        
+        {% else %}
+
+            <!--  render all relevant products -->
+            <div class="row no-gutters card-deck mx-auto">
+                
+                {% for product in products %}
+                
+                    <div class="col">
+                        
+                            {% include "./includes/components/product-card.html" %}
+                        
+                    </div>
+                
+                {% endfor %}
+            </div>
+
+        {% endif %}
+
+        {% include "./includes/components/pagination.html" %}    
+    </main>
+    
+{% endblock %}
+
+{% block postloadjs %}
+    {{ block.super }}
+
+    <script src="{% static 'products/js/filterBy.js' %}"></script>
+    <script src="{% static 'products/js/qtySelectorBtns.js' %}"></script>
+    
+{% endblock %}

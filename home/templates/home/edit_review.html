@@ -1,0 +1,7 @@
+<!-- filepath: c:\Users\Ashiq Sazid\Documents\Vape-Store\home\templates\home\edit_review.html -->
+<h1>Edit Review</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Changes</button>
+</form>

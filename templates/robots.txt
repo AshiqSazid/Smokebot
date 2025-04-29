@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /accounts/
+Disallow: /shoppingcart/
+Disallow: /profile/
+Disallow: /summernote/
+Disallow: /admin/
+Sitemap: https://vaportown.dev-bowers.com/sitemap.mxl

@@ -1,0 +1,155 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    {% block meta %}
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% endblock %}
+
+    {% block extra_meta %}{% endblock %}
+
+    {% block corecss %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="//cdn-images.mailchimp.com/embedcode/classic-071822.css" rel="stylesheet">
+    <link href="{% static 'css/age-verification.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% endblock %}
+
+    {% block extra_css %}{% endblock %}
+
+    {% block corejs %}
+    <script src="https://kit.fontawesome.com/328aade986.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    {% endblock %}
+
+    {% block extra_js %}{% endblock %}
+
+    <link rel="icon" type="image/png" href="https://pp5-vapeshop.s3.eu-central-1.amazonaws.com/media/favicon.ico">
+    <title>Smoke Bot {% block head_title %}{% endblock %}</title>
+
+    <meta name="description" content="Vape supplies, mods, e-liquids, batteries, accessories and international shipping.">
+    <meta name="keywords" content="Vape shop, e-liquid, e-cigarettes, vaping devices, stop smoking, international shipping.">
+</head>
+
+<body class="d-flex flex-column">
+    <header class="container-fluid px-0">
+        {% include 'includes/components/navbar.html' %}
+        <div class="bg-black border-top-red border-bottom-red">
+            <p class="text-warning text-center py-3 font-weight-bold m-0">
+                Free International Delivery on all orders over €{{ free_shipping_qualifier }}
+            </p>
+        </div>
+
+        <div class="d-flex justify-content-center align-items-center my-3">
+            {% include 'includes/components/search-form.html' %}
+            <button id="micButton" class="btn btn-danger ml-2" style="font-size: 24px; padding: 8px 12px; border-radius: 8px;">
+                🎤
+            </button>
+        </div>
+    </header>
+
+    {% include 'includes/toasts/toast-initiator.html' %}
+
+    {% block page_header %}{% endblock %}
+    <div class="d-lg-none py-0 my-0">
+        {% include 'includes/components/search-form.html' %}
+    </div>
+
+    {% block content %}{% endblock %}
+    {% include 'includes/components/footer.html' %}
+
+    {% block postloadjs %}
+    <script src="{% static 'js/age-verification.js' %}"></script>
+    <script src="{% static 'js/mailChimp.js' %}"></script>
+    <script src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script>
+    <script src="{% static 'js/toasts.js' %}"></script>
+
+    <!-- 🎤 Voicebot Script -->
+    <script>
+    const micButton = document.getElementById('micButton');
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+
+    micButton.addEventListener('click', () => {
+        recognition.start();
+    });
+
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        console.log('🎙️ You said:', transcript);
+        micButton.disabled = true;
+
+        fetch('/reviews/voicebot/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: 'text=' + encodeURIComponent(transcript)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Server returned ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.reply) {
+                console.log('🤖 Bot says:', data.reply);
+                speakText(data.reply);
+            } else if (data.error) {
+                alert('Bot Error: ' + data.error);
+            } else {
+                alert('Bot Error: Unexpected response from server.');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            alert('Bot Error: ' + error.message);
+        })
+        .finally(() => {
+            micButton.disabled = false;
+        });
+    };
+
+    recognition.onerror = function(event) {
+        console.error('Mic error:', event.error);
+        alert('Mic Error: ' + event.error);
+    };
+
+    function speakText(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    </script>
+    {% endblock %}
+
+    {% block extra_body %}{% endblock %}
+</body>
+</html>
